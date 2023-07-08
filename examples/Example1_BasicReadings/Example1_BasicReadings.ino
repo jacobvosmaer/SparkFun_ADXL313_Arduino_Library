@@ -59,17 +59,23 @@ void setup()
   myAdxl.measureModeOn(); // wakes up the sensor from standby and puts it into measurement mode
 }
 
+int16_t convertToInt10(int16_t raw)
+{
+  raw &= 0x3ff;
+  return raw & (1<<9) ? raw - (1<<10) : raw;
+}
+
 void loop()
 {
   if(myAdxl.dataReady()) // check data ready interrupt, note, this clears all other int bits in INT_SOURCE reg
   {
     myAdxl.readAccel(); // read all 3 axis, they are stored in class variables: myAdxl.x, myAdxl.y and myAdxl.z
     Serial.print("x: ");
-    Serial.print(myAdxl.x);
+    Serial.print(convertToInt10(myAdxl.x));
     Serial.print("\ty: ");
-    Serial.print(myAdxl.y);
+    Serial.print(convertToInt10(myAdxl.y));
     Serial.print("\tz: ");
-    Serial.print(myAdxl.z);
+    Serial.print(convertToInt10(myAdxl.z));
     Serial.println();
   }
   else
